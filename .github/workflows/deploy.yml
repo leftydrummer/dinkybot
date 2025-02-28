@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: bluedragon
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
       
