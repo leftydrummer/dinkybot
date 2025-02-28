@@ -24,19 +24,14 @@ User initiated commands that make the bot perform actions. All users can access 
 
 ## Events
 
-Things the bot does automatically in response to something occuring
+Things the bot does automatically in response to something occurring
 
-- **On Ready** - Sends a "Hello World!" message when the bot comes online.
+- **On Ready** - Sends a "Hello World!" message when the bot handshakes with Discord and comes online.
 <details>
 <summary>Secret fun stuff 🤭</summary>
     
 - **'This is weird' listener** - Automatically posts the 'this is weird' GIF when a message in a channel contains "this is weird" or "this is really weird".
 </details>
-
-
-
-
-
 <br>
 <footer>
 Join the Dinky Podcast community to interact with DinkyBot and connect with fellow DINKs and SINKs!
