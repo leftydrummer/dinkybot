@@ -9,9 +9,8 @@ https://dinkypod.com
 DINK YOURSELF!
 
 ## About DinkyBot
-
-DinkyBot is a custom Discord bot created for the Dinky Podcast community, written in Python. <br><br> 
-It's designed to add fun and utility (lol yeah right) to the Discord server. <br><br>
+DinkyBot is a custom Discord bot created for the Dinky Podcast community, written in [Python](https://www.python.org). Huge shout out to the crew over at [Discord.py](https://github.com/Rapptz/discord.py) for making this easy and fun ❤️  <br><br> 
+It's designed to add fun and utility(lol yeah right) to the Discord server.<br><br>
 My hope is that it can grow organically to serve the community's needs. The sky is the limit!
 
 ## Slash Commands
