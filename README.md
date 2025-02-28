@@ -13,6 +13,7 @@ DinkyBot is a custom Discord bot created for the Dinky Podcast community, writte
 It's designed to add fun and utility(lol yeah right) to the Discord server.<br><br>
 My hope is that it can grow organically to serve the community's needs. The sky is the limit!
 
+[Install DinkyBot to your Discord server 😎](https://discord.com/oauth2/authorize?client_id=1344839681929379880)
 
 Have an idea? Put in a [feature suggestion](https://github.com/leftydrummer/dinkybot/issues/new?template=feature_suggestion.yml)!
 
