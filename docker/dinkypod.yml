@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  dinkybot:
+    build: .
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+    volumes:
+      - .:/app
+    command: python dinkybot.py
