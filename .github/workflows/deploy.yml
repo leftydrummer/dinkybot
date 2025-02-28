@@ -15,4 +15,4 @@ jobs:
         run: echo "${{ secrets.ENV_FILE }}" > .env
       
       - name: Build and deploy with Docker Compose
-        run: cd docker && docker-compose up -d --build
+        run: docker compose up -d --build
