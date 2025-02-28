@@ -1,0 +1,13 @@
+name: Feature Suggestion
+description: Suggest a new feature or improvement for the Discord bot
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Describe the changes or features you'd like
+      description: Describe what you'd like to see! The more details the better.
+      placeholder: I would like the bot to...
+    validations:
+      required: true
