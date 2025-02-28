@@ -48,19 +48,6 @@ async def on_message(message):
 SLASH COMMANDS
 """
 
-# /ping will have dinkybot respond with its network latency in ms
-@dinkybot.tree.command(name="ping", description="Responds with the bot's latency.")
-async def ping(interaction: discord.Interaction):
-    """Responds with the bot's latency."""
-    await interaction.response.send_message(f"Pong! Latency: {round(dinkybot.latency * 1000)}ms")
-
-
-# /hello will have dinkybot respond with hello, mentioning the user
-@dinkybot.tree.command(name="hello")
-async def hello(interaction: discord.Interaction):
-    await interaction.response.send_message(f"Hello, {interaction.user.mention}!")
-
-
 # /weird will have dinkybot post the "this is really weird" GIF
 @dinkybot.tree.command(name="weird", description="Posts the Jillie GIF")
 async def weird(interaction: discord.Interaction):
