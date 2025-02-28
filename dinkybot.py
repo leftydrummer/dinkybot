@@ -23,13 +23,11 @@ dinkybot = commands.Bot(command_prefix="!", intents=intents)
 EVENT HANDLERS @
 """
 
+
 # Runs after the bot is authenticated and synced with Discord
+# For all guilds, find the general channel and post the 'ready' message
 @dinkybot.event
 async def on_ready():
-    channel_id = 1334231390711185580
-    channel = dinkybot.get_channel(channel_id)
-    await channel.send("Hello World! I'm online now.")
-
     # Sync the application commands defined here
     try:
         synced = await dinkybot.tree.sync()
@@ -37,19 +35,28 @@ async def on_ready():
     except Exception as e:
         print(e)
 
+    for guild in dinkybot.guilds:
+        for channel in guild.channels:
+            if channel.name == "general" and isinstance(channel, discord.TextChannel):
+                await channel.send("Hello World! I'm awake!")
+                break
+
+
 # If a message in the server contains the string "this is really weird" or "this is weird", post the Jillie GIF
 @dinkybot.event
 async def on_message(message):
-    if "this is really weird" in message.content or "this is weird" in message.content:
+    if "this is really weird" in str.lower(message.content) or "this is weird" in str.lower(message.content):
         await utils.post_gif("weird", message)
     await dinkybot.process_commands(message)
+
 
 """
 SLASH COMMANDS
 """
 
+
 # /weird will have dinkybot post the "this is really weird" GIF
-@dinkybot.tree.command(name="weird", description="Posts the Jillie GIF")
+@dinkybot.tree.command(name="weird", description="Posts the 'this is weird' GIF")
 async def weird(interaction: discord.Interaction):
     await utils.post_gif("weird", interaction)
 
