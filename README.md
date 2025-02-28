@@ -13,6 +13,10 @@ DinkyBot is a custom Discord bot created for the Dinky Podcast community, writte
 It's designed to add fun and utility(lol yeah right) to the Discord server.<br><br>
 My hope is that it can grow organically to serve the community's needs. The sky is the limit!
 
+
+Have an idea? Put in a [feature suggestion](https://github.com/username/repository/issues/new?template=feature_suggestion.yml)!
+
+
 ## Slash Commands
 
 User initiated commands that make the bot perform actions. All users can access by typing "/" followed by the command
