@@ -16,7 +16,9 @@ My hope is that it can grow organically to serve the community's needs. The sky 
 [Install DinkyBot to your Discord server 😎](https://discord.com/oauth2/authorize?client_id=1344839681929379880)
 
 Have an idea? Put in a [feature suggestion](https://github.com/leftydrummer/dinkybot/issues/new?template=feature_suggestion.yml)!
+<hr>
 
+##### Some stuff it can do:
 
 ## Slash Commands
 
