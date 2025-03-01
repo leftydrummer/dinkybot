@@ -1,10 +1,5 @@
 """ 
 Made with ❤️ by Neill for the Dinky Podcast community 
-
-https://dinkypod.com
-
-DINK YOURSELF! 
-
 """
 
 import utils
@@ -42,7 +37,7 @@ async def on_ready():
                 break
 
 
-# If a message in the server contains the string "this is really weird" or "this is weird", post the Jillie GIF
+# If a message in the server contains the string "this is really weird" or "this is weird", post the 'weird' GIF
 @dinkybot.event
 async def on_message(message):
     if "this is really weird" in str.lower(message.content) or "this is weird" in str.lower(message.content):
