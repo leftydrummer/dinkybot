@@ -46,7 +46,7 @@ async def on_ready():
 @dinkybot.event
 async def on_message(message):
     if "this is really weird" in str.lower(message.content) or "this is weird" in str.lower(message.content):
-        await utils.post_gif("weird", message)
+        await utils.post_gif("weird-optimized", message)
     await dinkybot.process_commands(message)
 
 
@@ -56,13 +56,13 @@ SLASH COMMANDS
 
 
 # /weird will have dinkybot post the "this is really weird" GIF
-@dinkybot.tree.command(name="weird", description="Posts the 'this is weird' GIF")
+@dinkybot.tree.command(name="weird-optimized", description="Posts the 'this is weird' GIF")
 async def weird(interaction: discord.Interaction):
     await utils.post_gif("weird", interaction)
 
 
 # /dy will have dinkybot post the "dink yourself" GIF
-@dinkybot.tree.command(name="dy", description="Post the DINK YOURSELF GIF")
+@dinkybot.tree.command(name="dy-optimized", description="Post the DINK YOURSELF GIF")
 async def dy(interaction: discord.Interaction):
     await utils.post_gif("dy", interaction)
 
