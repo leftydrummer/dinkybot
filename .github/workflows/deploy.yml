@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - dev
 
 jobs:
   deploy:
@@ -10,17 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Determine env config
-        run: |
-          if [ "${GITHUB_REF}" == "refs/heads/main" ]; then
-            echo "secret_name=ENV_FILE_MAIN" >> $GITHUB_ENV
-          elif [ "${GITHUB_REF}" == "refs/heads/dev" ]; then
-            echo "secret_name=ENV_FILE_DEV" >> $GITHUB_ENV
-          fi
-        id: determine_secret
+      - name: Create .env file for main
+        run: echo "${{ secrets.ENV_FILE_MAIN }}" > .env.main
 
-      - name: Create .env file
-        run: echo "${{ secrets[env.secret_name] }}" > .env
+      - name: Create .env file for dev
+        run: echo "${{ secrets.ENV_FILE_DEV }}" > .env.dev
 
-      - name: Build and deploy with Docker Compose
+      - name: Build and deploy containers
         run: docker compose up -d --build
