@@ -72,6 +72,7 @@ Things the bot does automatically in response to something occurring
 <summary>Secret fun stuff 🤭</summary>
     
 - **"This is weird" listener** - Automatically posts the "this is weird" GIF when a message in a channel contains "this is weird" or "this is really weird".
+- Anti-LOTR talk detection - Posts a joke warning when a message contains negative sentiment about LOTR 
 </details>
 <br>
 <footer>
