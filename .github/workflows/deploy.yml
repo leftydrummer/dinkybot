@@ -1,5 +1,3 @@
-name: Deploy Bot
-
 on:
   push:
     branches:
@@ -10,9 +8,12 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
-      
-      - name: Create .env file
-        run: echo "${{ secrets.ENV_FILE }}" > .env
-      
-      - name: Build and deploy with Docker Compose
+
+      - name: Create .env file for main
+        run: echo "${{ secrets.ENV_FILE_MAIN }}" > .env.main
+
+      - name: Create .env file for dev
+        run: echo "${{ secrets.ENV_FILE_DEV }}" > .env.dev
+
+      - name: Build and deploy containers
         run: docker compose up -d --build

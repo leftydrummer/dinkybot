@@ -1,8 +1,16 @@
 version: '3.8'
 
 services:
-  dinkybot:
-    labels:
-      - "com.centurylinklabs.watchtower.enable=false"
-    build: .
-    restart: unless-stopped
+  dinkybot_main:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env.main
+
+  dinkybot_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env.dev
