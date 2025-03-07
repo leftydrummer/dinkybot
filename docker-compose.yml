@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: dinkybot_main  
     env_file:
       - .env.main
 
@@ -12,5 +13,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: dinkybot_dev   
     env_file:
       - .env.dev
