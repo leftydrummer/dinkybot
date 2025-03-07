@@ -1,18 +1,26 @@
-name: Deploy Bot
-
 on:
   push:
     branches:
       - main
+      - dev
 
 jobs:
   deploy:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
-      
+
+      - name: Determine env config
+        run: |
+          if [ "${GITHUB_REF}" == "refs/heads/main" ]; then
+            echo "secret_name=ENV_FILE_MAIN" >> $GITHUB_ENV
+          elif [ "${GITHUB_REF}" == "refs/heads/dev" ]; then
+            echo "secret_name=ENV_FILE_DEV" >> $GITHUB_ENV
+          fi
+        id: determine_secret
+
       - name: Create .env file
-        run: echo "${{ secrets.ENV_FILE }}" > .env
-      
+        run: echo "${{ secrets[env.secret_name] }}" > .env
+
       - name: Build and deploy with Docker Compose
         run: docker compose up -d --build
