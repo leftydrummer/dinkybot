@@ -65,7 +65,10 @@ async def rss_entry_embed(entry: feedparser.FeedParserDict):
 
 # get channel object by name given a guild object and a channel name
 async def get_channel_by_name(guild: discord.Guild, name: str):
-    return discord.utils.get(guild.text_channels, name=name)
+    for channel in guild.text_channels:
+        if name.lower() in channel.name.lower():
+            return channel
+    return None
 
 
 # given a channel object, post the new episode alert and the embed to that channel
