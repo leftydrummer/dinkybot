@@ -3,4 +3,3 @@ python-dotenv
 nltk
 feedparser
 markdownify
-rapidfuzz
