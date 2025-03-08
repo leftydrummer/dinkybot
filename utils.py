@@ -65,7 +65,7 @@ async def rss_entry_embed(entry: feedparser.FeedParserDict):
 
 # get channel object by name given a guild object and a channel name
 async def get_channel_by_name(guild: discord.Guild, name: str):
-    for channel in guild.text_channels:
+    for channel in guild.channels:
         if name.lower() in channel.name.lower():
             return channel
     return None
