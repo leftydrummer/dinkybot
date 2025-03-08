@@ -1,22 +1,10 @@
 version: '3.8'
 
 services:
-  dinkybot_main:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: dinkybot_main  
-    env_file:
-      - .env.main
-    labels:
-      - "com.centurylinklabs.watchtower.enable=false"
-
-  dinkybot_dev:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: dinkybot_dev   
-    env_file:
-      - .env.dev
-    labels:
-      - "com.centurylinklabs.watchtower.enable=false"
+  dinkybot:
+    build: .
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+    volumes:
+      - .:/app
+    command: python dinkybot.py

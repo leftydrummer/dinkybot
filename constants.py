@@ -1,6 +1,6 @@
 # Centralize constant values used across the project
 
-lotr_keywords = [
+LOTR_KEYWORDS = [
     "lord of the rings",
     "lotr",
     "tolkien",
@@ -29,12 +29,9 @@ lotr_keywords = [
     "orthanc",
     "barad-dûr",
     "the one ring",
-    "my precious",
     "hobbit",
     "hobbitses",
     "shirefolk",
-    "elves",
-    "dwarves",
     "uruk-hai",
     "nazgul",
     "wraith",
@@ -57,8 +54,6 @@ lotr_keywords = [
     "anduril",
     "glamdring",
     "orcish",
-    "black speech",
-    "white council",
     "the fellowship",
     "fellowship of the ring",
     "two towers",
@@ -124,3 +119,15 @@ lotr_keywords = [
 ]
 
 LOTR_WARNING = "Our system has detected possible anti-Lord of the Rings sentiment in your post. Continuing to engage in this behavior may result in disciplinary action. 🔨"
+
+PODCAST_NOTIFICATION_CHANNEL_NAME = "podcast-chatter"
+
+INTROS_CHANNEL_NAME = "intros-bios"
+
+GENERAL_PURPOSE_CHANNEL_NAME = "general"
+
+NEW_PODCAST_ALERT = "🚨🎙️ NEW EPISODE! 🎙️🚨"
+
+BOT_READY_MSG = (
+    "Hello Dinky Squad! I'm back and better than ever! 🤖. Type /help to learn more"
+)
