@@ -5,7 +5,6 @@ import nltk.sentiment.vader
 import constants
 import nltk
 import feedparser
-import rapidfuzz
 from markdownify import markdownify as md
 import random
 
