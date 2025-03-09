@@ -246,4 +246,8 @@ async def help(interaction: discord.Interaction, private: bool = True):
 
 
 # start bot event loop
-dinkybot.run(os.getenv("BOT_TOKEN"))
+token = os.getenv("BOT_TOKEN")
+print(
+    f"Bot token: {token}"
+)  # Add this line to check if the token is being read correctly
+dinkybot.run(token)
