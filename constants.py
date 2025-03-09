@@ -128,6 +128,8 @@ GENERAL_PURPOSE_CHANNEL_NAME = "general"
 
 NEW_PODCAST_ALERT = "🚨🎙️ NEW EPISODE! 🎙️🚨"
 
-BOT_READY_MSG = (
-    "Hello Dinky Squad! I'm back and better than ever! 🤖. Type /help to learn more"
-)
+BOT_READY_MSG = """
+**Hello Dinky Squad! I'm back and better than ever! 🤖. Type /help to learn more**
+## Changes
+- Tweak sensitivity of anti-LOTR sentiment detection. Sorry Jillie lol
+"""
