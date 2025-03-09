@@ -16,7 +16,7 @@ sentiment_analyzer = nltk.sentiment.vader.SentimentIntensityAnalyzer()
 # locate a GIF by name in the assets folder and post it given a name and the discord Interaction context
 async def post_gif(gif_name: str, context):
     try:
-        file = get_gif_file(gif_name)
+        file = await get_gif_file(gif_name)
         if isinstance(context, discord.Interaction):
             await context.response.send_message(file=file)
         elif isinstance(context, discord.Message):
