@@ -38,7 +38,7 @@ async def get_gif_file(gif_name: str) -> discord.File:
 async def contains_anti_lotr_sentiment(message: str):
     return (
         any(keyword in message.lower() for keyword in constants.LOTR_KEYWORDS)
-        and sentiment_analyzer.polarity_scores(message)["compound"] < 0.6
+        and sentiment_analyzer.polarity_scores(message)["compound"] < -0.6
     )
 
 
