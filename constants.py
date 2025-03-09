@@ -133,3 +133,5 @@ BOT_READY_MSG = """
 ## Changes
 - Fix - Fixed *another* bug that prevented GIFs from being posted correctly smh
 """
+
+SHOW_READY_MSG = False

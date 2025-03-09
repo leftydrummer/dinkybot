@@ -74,7 +74,9 @@ async def on_ready():
         for channel in guild.text_channels:
             print(f"Found text channel: {channel.name} (id: {channel.id})")
 
-    await general_channel.send(constants.BOT_READY_MSG)
+    # Send a message to the general channel to indicate the bot is ready
+    if constants.SHOW_READY_MSG:
+        await general_channel.send(constants.BOT_READY_MSG)
 
 
 # Runs when a message is posted to any channel the bot has access to
