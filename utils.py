@@ -15,15 +15,12 @@ sentiment_analyzer = nltk.sentiment.vader.SentimentIntensityAnalyzer()
 
 # locate a GIF by name in the assets folder and post it given a name and the discord Interaction context
 async def post_gif(gif_name: str, context):
-    try:
-        file = get_gif_file(gif_name)
-        if isinstance(context, discord.Interaction):
-            await context.response.send_message(file=file)
-        elif isinstance(context, discord.Message):
-            await context.channel.send(file=file)
-    except FileNotFoundError as e:
-        print(e)
-        return
+    gif_path = os.path.join("assets", f"{gif_name}.gif")
+    if os.path.exists(gif_path):
+        file = await get_gif_file(gif_name)
+        await context.response.send_message(file=file)
+    else:
+        await context.response.send_message("Oops! I couldn't find the GIF.")
 
 
 async def get_gif_file(gif_name: str) -> discord.File:
@@ -31,7 +28,7 @@ async def get_gif_file(gif_name: str) -> discord.File:
     if os.path.exists(gif_path):
         return discord.File(gif_path)
     else:
-        raise FileNotFoundError(f"File {gif_path} does not exist.")
+        raise FileNotFoundError(f"GIF file {gif_name} not found.")
 
 
 # returns bool indicating if the message contains anti-lotr sentiment
