@@ -131,5 +131,5 @@ NEW_PODCAST_ALERT = "🚨🎙️ NEW EPISODE! 🎙️🚨"
 BOT_READY_MSG = """
 **Hello Dinky Squad! I'm back and better than ever! 🤖. Type /help to learn more**
 ## Changes
-- Tweak sensitivity of anti-LOTR sentiment detection. Sorry Jillie lol
+- Fix - Fixed a bug that posted the latest episode on every bot startup
 """

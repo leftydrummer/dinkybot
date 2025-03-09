@@ -134,13 +134,9 @@ async def rss_checker():
         fetched_latest_rss_entry = podcast_feed.entries[0]
         podcast_embed = await utils.rss_entry_embed(fetched_latest_rss_entry)
 
-        # If there is no stored latest entry, store the fetched latest entry and send an alert
+        # If there is no stored latest entry, store the fetched latest entry
         if not stored_latest_rss_entry:
             stored_latest_rss_entry = fetched_latest_rss_entry
-            if podcast_alerts_channel:
-                await utils.post_new_episode_alert(
-                    podcast_alerts_channel, podcast_embed
-                )
         else:
             # If the stored latest entry's guid is different from the fetched latest entry's guid, update the stored latest entry and send an alert
             if stored_latest_rss_entry.get("guid") != fetched_latest_rss_entry.get(
