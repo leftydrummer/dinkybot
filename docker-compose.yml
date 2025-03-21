@@ -8,6 +8,7 @@ services:
       - .env.main
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
+    restart: unless-stopped
 
   dinkybot_dev:
     build:
@@ -18,3 +19,4 @@ services:
       - .env.dev
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
+    restart: unless-stopped                 
