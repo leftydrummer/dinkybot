@@ -95,9 +95,11 @@ async def on_message(message):
         await message.channel.send(f"It sure is, {message.author.mention}")
         await utils.post_gif("weird-optimized", message)
 
-    # Post joke reply if messsage contains negative sentiment and LOTR keywords
-    if await utils.contains_anti_lotr_sentiment(message.content):
-        await message.reply(constants.LOTR_WARNING, mention_author=True)
+    # Need to improve sentiment analysis before re-enabling
+
+    # # Post joke reply if messsage contains negative sentiment and LOTR keywords
+    # if await utils.contains_anti_lotr_sentiment(message.content):
+    #     await message.reply(constants.LOTR_WARNING, mention_author=True)
 
     # make sure any commands in the message are processed
     await dinkybot.process_commands(message)
