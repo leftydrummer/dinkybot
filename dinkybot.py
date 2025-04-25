@@ -5,7 +5,6 @@ Made with ❤️ by Neill for the Dinky Podcast community
 import utils
 import constants
 import discord
-import nltk
 import os
 import feedparser
 from discord.ext import commands, tasks
