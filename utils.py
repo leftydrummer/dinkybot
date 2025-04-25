@@ -13,7 +13,7 @@ import shutil
 # sentiment_analyzer = nltk.sentiment.vader.SentimentIntensityAnalyzer()
 
 
-# locate a GIF by name in the assets folder and post it given a name and the discord Interaction context
+# locate an asset by name and extentsion in the assets folder and post it 
 async def post_asset_file(asset_file_name: str, file_ext: str, context):
     try:
         file = await get_asset_file(asset_file_name, file_ext)

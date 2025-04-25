@@ -97,7 +97,7 @@ async def on_message(message):
         message.content
     ) or "this is weird" in str.lower(message.content):
         await message.channel.send(f"It sure is, {message.author.mention}")
-        await utils.post_gif("weird-optimized", message)
+        await utils.post_asset_file("weird-optimized", "gif", message)
 
     # Need to improve sentiment analysis before re-enabling
 
@@ -118,7 +118,7 @@ async def on_member_join(member):
         f"Welcome to the server, {member.mention}! We welcome you. Type `/help` to learn more about me. DINK YOURSELF!"
     )
 
-    await intros_channel.send(file=(await utils.get_gif_file("dy-optimized")))
+    await intros_channel.send(file=(await utils.get_asset_file("dy-optimized", "gif")))
 
 
 ### TASKS ###
@@ -170,7 +170,7 @@ async def weird(interaction: discord.Interaction):
 # /dy will have dinkybot post the "dink yourself" GIF
 @dinkybot.tree.command(name="dy", description="Post the DINK YOURSELF GIF")
 async def dy(interaction: discord.Interaction):
-    await utils.post_gif("dy-optimized", interaction)
+    await utils.post_asset_file("dy-optimized", "gif", interaction)
 
 
 # /gf will have dinkybot post the "get fucked" PNG
