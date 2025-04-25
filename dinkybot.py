@@ -10,6 +10,10 @@ import os
 import feedparser
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
+from datetime import datetime, timezone, timedelta
+
+import platform
+import psutil
 
 load_dotenv()
 
@@ -26,6 +30,7 @@ intros_channel = None
 general_channel = None
 podcast_feed = None
 stored_latest_rss_entry = None
+bot_start_time = datetime.now(timezone.utc)
 
 
 ### EVENT HANDLERS ###
@@ -160,13 +165,19 @@ async def rss_checker():
 # /weird will have dinkybot post the "this is really weird" GIF
 @dinkybot.tree.command(name="weird", description="Posts the 'this is weird' GIF")
 async def weird(interaction: discord.Interaction):
-    await utils.post_gif("weird-optimized", interaction)
+    await utils.post_asset_file("weird-optimized", interaction)
 
 
 # /dy will have dinkybot post the "dink yourself" GIF
 @dinkybot.tree.command(name="dy", description="Post the DINK YOURSELF GIF")
 async def dy(interaction: discord.Interaction):
     await utils.post_gif("dy-optimized", interaction)
+
+
+# /gf will have dinkybot post the "get fucked" PNG
+@dinkybot.tree.command(name="gf", description="Post the GET FUCKED image")
+async def gf(interaction: discord.Interaction):
+    await utils.post_asset_file("gf-optimized", "png", interaction)
 
 
 # /latest-episode will give the user the podcast embed for the latest episode ephemerally
@@ -242,6 +253,56 @@ async def help(interaction: discord.Interaction, private: bool = True):
     for chunk in chunks[1:]:
         await interaction.followup.send(chunk, ephemeral=private)
 
+    return
+
+
+@dinkybot.tree.command(
+    name="video-link",
+    description="Post a video link with a nice inline embed",
+)
+async def video_link(interaction: discord.Interaction):
+    await interaction.response.send_modal(utils.VideoLinkModal())
+
+
+@dinkybot.tree.command(
+    name="debug-info",
+    description="Get debug/environment info about the bot",
+)
+async def debug_info(interaction: discord.Interaction):
+    # Calculate uptime using timezone-aware datetime
+    now = datetime.now(timezone.utc)
+    uptime = now - bot_start_time
+    uptime_str = str(uptime).split(".")[0]  # Remove microseconds
+
+    # Gather system info
+    python_version = platform.python_version()
+    dpy_version = discord.__version__
+    os_info = f"{platform.system()} {platform.release()}"
+    cpu = platform.processor() or "Unknown"
+    ram = psutil.virtual_memory().total // (1024**2)  # in MB
+    current_time = now.astimezone().strftime("%Y-%m-%d %H:%M:%S %Z")
+    hostname = platform.node()
+
+    # Create embed with timezone-aware timestamp
+    embed = discord.Embed(
+        title="🛠️ DinkyBot Debug Info", color=discord.Color.blue(), timestamp=now
+    )
+    embed.add_field(name="Bot Name", value=interaction.client.user.name, inline=True)
+    embed.add_field(name="Bot ID", value=interaction.client.user.id, inline=True)
+    embed.add_field(name="Uptime (UTC)", value=uptime_str, inline=True)
+    embed.add_field(
+        name="Guilds", value=str(len(interaction.client.guilds)), inline=True
+    )
+    embed.add_field(name="Python", value=python_version, inline=True)
+    embed.add_field(name="discord.py", value=dpy_version, inline=True)
+    embed.add_field(name="OS", value=os_info, inline=True)
+    embed.add_field(name="CPU", value=cpu, inline=True)
+    embed.add_field(name="RAM", value=f"{ram} MB", inline=True)
+    embed.add_field(name="Local Time", value=current_time, inline=True)
+    embed.add_field(name="Hostname", value=hostname, inline=True)
+    embed.set_footer(text="UTC Timestamp")
+
+    await interaction.response.send_message(embed=embed, ephemeral=True)
     return
 
 
