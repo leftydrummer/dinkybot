@@ -164,7 +164,7 @@ async def rss_checker():
 # /weird will have dinkybot post the "this is really weird" GIF
 @dinkybot.tree.command(name="weird", description="Posts the 'this is weird' GIF")
 async def weird(interaction: discord.Interaction):
-    await utils.post_asset_file("weird-optimized", interaction)
+    await utils.post_asset_file("weird-optimized", "gif", interaction)
 
 
 # /dy will have dinkybot post the "dink yourself" GIF
