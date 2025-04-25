@@ -1,7 +1,6 @@
 import discord
 import os
 import constants
-import nltk
 import feedparser
 from markdownify import markdownify as md
 import random
