@@ -115,7 +115,7 @@ async def on_member_join(member):
     print(f"{member} has joined the server!")
     global intros_channel
     await intros_channel.send(
-        f"Welcome to the server, {member.mention}! We welcome you. Type `/help` to learn more about me. DINK YOURSELF!"
+        f"Welcome to the server, {member.mention}! Type `/help` to learn more about me. DINK YOURSELF!"
     )
 
     await intros_channel.send(file=(await utils.get_asset_file("dy-optimized", "gif")))
