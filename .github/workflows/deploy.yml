@@ -2,18 +2,26 @@ on:
   push:
     branches:
       - main
+  schedule:
+    - cron: '0 10 * * *'
 
 jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Create .env file for main
-        run: echo "${{ secrets.ENV_FILE_MAIN }}" > .env.main
+        run: |
+          printf '%s' "${{ secrets.ENV_FILE_MAIN }}" > .env.main
 
       - name: Create .env file for dev
-        run: echo "${{ secrets.ENV_FILE_DEV }}" > .env.dev
+        run: |
+          printf '%s' "${{ secrets.ENV_FILE_DEV }}" > .env.dev
+
+      - name: Pull latest base images
+        run: docker compose pull
 
       - name: Build and deploy containers
-        run: docker compose up -d --build
+        run: docker compose up -d --build --force-recreate
