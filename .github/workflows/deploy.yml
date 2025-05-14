@@ -24,7 +24,7 @@ jobs:
         run: docker compose build --pull
 
       - name: Deploy containers
-        run: docker compose up -d --build --force-recreate
+        run: docker compose up -d --force-recreate
 
       - name: Clean up unused Docker resources
         run: docker system prune -af --volumes
