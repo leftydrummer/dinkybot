@@ -3,7 +3,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '0 10 * * *'
+    - cron: '0 10 * * *'  # Every day at 10:00 UTC (5:00 AM Central Daylight, 4:00 AM Central Standard)
 
 jobs:
   deploy:
@@ -20,8 +20,11 @@ jobs:
         run: |
           printf '%s' "${{ secrets.ENV_FILE_DEV }}" > .env.dev
 
-      - name: Pull latest base images
-        run: docker compose pull
+      - name: Build containers with latest base images
+        run: docker compose build --pull
 
-      - name: Build and deploy containers
+      - name: Deploy containers
         run: docker compose up -d --build --force-recreate
+
+      - name: Clean up unused Docker resources
+        run: docker system prune -af --volumes
