@@ -357,7 +357,7 @@ async def channel_map(interaction: discord.Interaction, private: bool = True):
             else:
                 channel_icon = "📺"
 
-            channel_map_text += f"│   {channel_prefix}{channel_icon} {channel.name}\n"
+            channel_map_text += f"│   {channel_prefix}{channel_icon} <#{channel.id}>\n"
 
             # Get threads for this channel if it's a text or forum channel
             if isinstance(channel, (discord.TextChannel, discord.ForumChannel)):
@@ -390,7 +390,7 @@ async def channel_map(interaction: discord.Interaction, private: bool = True):
                             else:
                                 thread_icon = "🧵"  # Active thread
 
-                            channel_map_text += f"│   {continuation}    {thread_prefix}{thread_icon} {thread.name}\n"
+                            channel_map_text += f"│   {continuation}    {thread_prefix}{thread_icon} <#{thread.id}>\n"
                 except Exception as e:
                     # If we can't access threads, just skip them
                     pass
@@ -416,7 +416,7 @@ async def channel_map(interaction: discord.Interaction, private: bool = True):
             else:
                 channel_icon = "📺"
 
-            channel_map_text += f"    {channel_prefix}{channel_icon} {channel.name}\n"
+            channel_map_text += f"    {channel_prefix}{channel_icon} <#{channel.id}>\n"
 
             # Get threads for this channel if it's a text or forum channel
             if isinstance(channel, (discord.TextChannel, discord.ForumChannel)):
@@ -449,7 +449,7 @@ async def channel_map(interaction: discord.Interaction, private: bool = True):
                             else:
                                 thread_icon = "🧵"  # Active thread
 
-                            channel_map_text += f"    {continuation}    {thread_prefix}{thread_icon} {thread.name}\n"
+                            channel_map_text += f"    {continuation}    {thread_prefix}{thread_icon} <#{thread.id}>\n"
                 except Exception as e:
                     pass
 
