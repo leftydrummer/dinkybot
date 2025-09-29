@@ -323,7 +323,7 @@ async def channel_map(interaction: discord.Interaction, private: bool = True):
     symbol_key = (
         "**Legend:**\n"
         "💬 Text Channel   🔊 Voice Channel   📋 Forum Channel   🎤 Stage Channel   📺 Other Channel\n"
-        "🧵 Active Thread   📦 Archived Thread   🔒 Locked Thread\n\n"
+        "🧵 Active Thread    Locked Thread\n\n"
     )
     channel_map_text = f"📋 **Directory for {guild.name}**\n" + symbol_key + "\n"
 
@@ -367,25 +367,19 @@ async def channel_map(interaction: discord.Interaction, private: bool = True):
                     if hasattr(channel, 'threads'):
                         active_threads = list(channel.threads)
 
-                    # Also try to get archived threads (limited to avoid rate limits)
-                    try:
-                        async for thread in channel.archived_threads(limit=10):
-                            active_threads.append(thread)
-                    except:
-                        pass  # Skip if we can't access archived threads
+                    # Filter out archived threads - only show active and locked threads
+                    non_archived_threads = [thread for thread in active_threads if not thread.archived]
 
-                    if active_threads:
-                        active_threads.sort(key=lambda x: x.name.lower())
+                    if non_archived_threads:
+                        non_archived_threads.sort(key=lambda x: x.name.lower())
 
-                        for j, thread in enumerate(active_threads):
-                            is_last_thread = j == len(active_threads) - 1
+                        for j, thread in enumerate(non_archived_threads):
+                            is_last_thread = j == len(non_archived_threads) - 1
                             thread_prefix = "└── " if is_last_thread else "├── "
                             continuation = "    " if is_last_channel else "│   "
 
-                            # Thread status indicators
-                            if thread.archived:
-                                thread_icon = "📦"  # Archived
-                            elif thread.locked:
+                            # Thread status indicators (only active and locked, no archived)
+                            if thread.locked:
                                 thread_icon = "🔒"  # Locked
                             else:
                                 thread_icon = "🧵"  # Active thread
@@ -426,25 +420,19 @@ async def channel_map(interaction: discord.Interaction, private: bool = True):
                     if hasattr(channel, 'threads'):
                         active_threads = list(channel.threads)
 
-                    # Also try to get archived threads (limited)
-                    try:
-                        async for thread in channel.archived_threads(limit=10):
-                            active_threads.append(thread)
-                    except:
-                        pass
+                    # Filter out archived threads - only show active and locked threads
+                    non_archived_threads = [thread for thread in active_threads if not thread.archived]
 
-                    if active_threads:
-                        active_threads.sort(key=lambda x: x.name.lower())
+                    if non_archived_threads:
+                        non_archived_threads.sort(key=lambda x: x.name.lower())
 
-                        for j, thread in enumerate(active_threads):
-                            is_last_thread = j == len(active_threads) - 1
+                        for j, thread in enumerate(non_archived_threads):
+                            is_last_thread = j == len(non_archived_threads) - 1
                             thread_prefix = "└── " if is_last_thread else "├── "
                             continuation = "    " if is_last_channel else "    "
 
-                            # Thread status indicators
-                            if thread.archived:
-                                thread_icon = "📦"  # Archived
-                            elif thread.locked:
+                            # Thread status indicators (only active and locked, no archived)
+                            if thread.locked:
                                 thread_icon = "🔒"  # Locked
                             else:
                                 thread_icon = "🧵"  # Active thread
