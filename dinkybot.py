@@ -312,7 +312,6 @@ async def debug_info(interaction: discord.Interaction):
 @discord.app_commands.describe(private="if true only you can see the response")
 async def channel_map(interaction: discord.Interaction, private: bool = True):
     # Defer the interaction response since this might take a moment
-    private = True
     await interaction.response.defer(ephemeral=private)
 
     guild = interaction.guild
