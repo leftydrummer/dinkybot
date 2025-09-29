@@ -3,3 +3,6 @@ python-dotenv
 feedparser
 markdownify
 psutil
+ffmpeg4discord
+aiohttp
+asyncio

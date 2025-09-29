@@ -7,6 +7,11 @@ import random
 import yt_dlp
 import uuid
 import shutil
+from pathlib import Path
+from ffmpeg4discord.twopass import TwoPass
+import aiohttp
+import asyncio
+import subprocess
 
 # # download the vader lexicon for sentiment analysis
 # nltk.download("vader_lexicon", quiet=True)
@@ -106,35 +111,83 @@ def generate_random_number():
 # download video with yt-dlp, save to temp folder
 # returns the file downloaded file path
 async def download_video(url: str):
-
     file_id = str(uuid.uuid4())[:8]  # Generate a random 8-character ID
     file_name = f"dinkybot_extract_{file_id}.mp4"
+    
+    def _download_sync():
+        ydl_opts = {
+            "format": "best",
+            "outtmpl": os.path.join("temp", file_name),
+            "postprocessors": [
+                {
+                    "key": "FFmpegVideoConvertor",
+                    "preferedformat": "mp4",
+                }
+            ],
+        }
 
-    ydl_opts = {
-        "format": "best",
-        "outtmpl": os.path.join("temp", file_name),
-        "postprocessors": [
-            {
-                "key": "FFmpegVideoConvertor",
-                "preferedformat": "mp4",
-            }
-        ],
-    }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+        
+        return os.path.join("temp", file_name)
+    
+    # Run yt-dlp download in thread pool to avoid blocking
+    return await asyncio.to_thread(_download_sync)
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
 
-    return os.path.join("temp", file_name)
+# compress video file to meet Discord's file size limits
+async def compress_video_for_discord(input_file_path: str, target_mb: int = 10) -> tuple[str, float]:
+    """
+    Compress a video file to meet Discord's file size limits.
+    Returns tuple of (output_filename, final_size_mb)
+    """
+    input_path = Path(input_file_path)
+    output_path = input_path.parent / f"compressed_{input_path.name}"
+    
+    def _compress_sync():
+        try:
+            # Get file size in MB for logging
+            file_size_mb = input_path.stat().st_size / (1024 * 1024)
+            print(f"[COMPRESSION] Starting compression of {file_size_mb:.1f}MB file to {target_mb}MB target")
+            print(f"[COMPRESSION] Input: {input_path}")
+            print(f"[COMPRESSION] Output: {output_path}")
+            
+            # Use TwoPass for compression - pass Path object for filename
+            twopass = TwoPass(
+                filename=input_path,  # Pass Path object, not string
+                target_filesize=target_mb,
+                output=str(output_path),   # Keep output as string
+                codec="libx264",
+                verbose=True,
+            )
+            
+            print(f"[COMPRESSION] TwoPass object created successfully")
+            final_size = twopass.run()
+            print(f"[COMPRESSION] TwoPass completed successfully, final size: {final_size}MB")
+            
+            return str(output_path), final_size
+                
+        except Exception as e:
+            print(f"[COMPRESSION ERROR] TwoPass compression failed: {e}")
+            print(f"[COMPRESSION ERROR] Error type: {type(e)}")
+            raise Exception(f"Video compression failed: {e}")
+    
+    # Run compression in thread pool to avoid blocking
+    return await asyncio.to_thread(_compress_sync)
 
 
 # given a url, get the yt-dlp extract_info for the video
 async def get_video_info(url: str):
-    ydl_opts = {
-        "format": "best",
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=False)
-    return info
+    def _get_info_sync():
+        ydl_opts = {
+            "format": "best",
+        }
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+        return info
+    
+    # Run yt-dlp in thread pool to avoid blocking
+    return await asyncio.to_thread(_get_info_sync)
 
 
 # leverage get_video_info to return a boolean indicating if the video is supported for download by yt-dlp
@@ -192,6 +245,11 @@ class VideoLinkModal(discord.ui.Modal, title="Post a Video Link"):
             )
             downloaded_file = await download_video(self.url.value)
         except Exception as e:
+            # Log the full error to console
+            print(f"[VIDEO ERROR] Video processing failed: {e}")
+            print(f"[VIDEO ERROR] Error type: {type(e)}")
+            print(f"[VIDEO ERROR] URL: {self.url.value}")
+            
             # Alert the user about the problem
             await interaction.followup.send(
                 f"An error occurred while processing the video: {str(e)}",
@@ -202,19 +260,55 @@ class VideoLinkModal(discord.ui.Modal, title="Post a Video Link"):
         # Create an embed for the video link
         embed = discord.Embed(
             title=f"{video_metadata["extractor_key"]} - {video_metadata["title"]}",
-            description=video_metadata["description"],
             url=self.url.value,
             color=discord.Color.blue(),
         )
         embed.set_footer(text="Enjoy your video!")
 
-        # Post the video file and embed
-        await interaction.followup.send(
-            content=f"Hey I grabbed that video for you {interaction.user.mention}! 🧙‍♂️🪄",
-            file=discord.File(downloaded_file),
-            embed=embed,
-            ephemeral=False,
-        )
+        # Try to post the video file and embed
+        try:
+            await interaction.followup.send(
+                content=f"Hey I grabbed that video for you {interaction.user.mention}! 🧙‍♂️🪄",
+                file=discord.File(downloaded_file),
+                embed=embed,
+                ephemeral=False,
+            )
+        except discord.HTTPException as e:
+            # Check if it's a 413 "Request Entity Too Large" error
+            if e.status == 413:
+                await interaction.followup.send(
+                    f"Video file is too large for Discord. Attempting to compress...",
+                    ephemeral=True,
+                )
+                
+                try:
+                    # Compress the video to 10MB
+                    compressed_file, final_size = await compress_video_for_discord(downloaded_file, target_mb=10)
+                    
+                    await interaction.followup.send(
+                        f"Video compressed to {final_size:.1f}MB. Uploading compressed version...",
+                        ephemeral=True,
+                    )
+                    
+                    # Try uploading the compressed version
+                    await interaction.followup.send(
+                        content=f"Hey I grabbed that video for you {interaction.user.mention}! 🧙‍♂️🪄 (Compressed to fit Discord limits)",
+                        file=discord.File(compressed_file),
+                        embed=embed,
+                        ephemeral=False,
+                    )
+                    
+                    # Clean up the compressed file
+                    os.remove(compressed_file)
+                    
+                except Exception as compress_error:
+                    await interaction.followup.send(
+                        f"Failed to compress video: {str(compress_error)}. The video may be too long or complex to compress to Discord's limits.",
+                        ephemeral=True,
+                    )
+            else:
+                # Re-raise other HTTP exceptions
+                raise e
 
         # Clear all files from temp folder after sending the video
         shutil.rmtree("temp")
