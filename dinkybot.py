@@ -306,11 +306,11 @@ async def debug_info(interaction: discord.Interaction):
 
 
 @dinkybot.tree.command(
-    name="server-map",
+    name="directory",
     description="Show all public channels and threads in a tree format",
 )
 @discord.app_commands.describe(private="if true only you can see the response")
-async def channel_map(interaction: discord.Interaction):
+async def channel_map(interaction: discord.Interaction, private: bool = True):
     # Defer the interaction response since this might take a moment
     private = True
     await interaction.response.defer(ephemeral=private)
@@ -320,8 +320,13 @@ async def channel_map(interaction: discord.Interaction):
         await interaction.followup.send("This command can only be used in a server.", ephemeral=True)
         return
 
-    # Build the channel map
-    channel_map_text = f"📋 **Channel Map for {guild.name}**\n\n"
+    # Build the channel map with a symbol key
+    symbol_key = (
+        "**Legend:**\n"
+        "💬 Text Channel   🔊 Voice Channel   📋 Forum Channel   🎤 Stage Channel   📺 Other Channel\n"
+        "🧵 Active Thread   📦 Archived Thread   🔒 Locked Thread\n\n"
+    )
+    channel_map_text = f"📋 **Directory for {guild.name}**\n" + symbol_key + "\n"
 
     # Get all categories and sort them
     categories = sorted([cat for cat in guild.categories], key=lambda x: x.position)
