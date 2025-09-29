@@ -305,6 +305,183 @@ async def debug_info(interaction: discord.Interaction):
     return
 
 
+@dinkybot.tree.command(
+    name="directory",
+    description="Show all public channels and threads in a tree format",
+)
+@discord.app_commands.describe(private="if true only you can see the response")
+async def channel_map(interaction: discord.Interaction, private: bool = True):
+    # Defer the interaction response since this might take a moment
+    private = True
+    await interaction.response.defer(ephemeral=private)
+
+    guild = interaction.guild
+    if not guild:
+        await interaction.followup.send("This command can only be used in a server.", ephemeral=True)
+        return
+
+    # Build the channel map with a symbol key
+    symbol_key = (
+        "**Legend:**\n"
+        "💬 Text Channel   🔊 Voice Channel   📋 Forum Channel   🎤 Stage Channel   📺 Other Channel\n"
+        "🧵 Active Thread   📦 Archived Thread   🔒 Locked Thread\n\n"
+    )
+    channel_map_text = f"📋 **Directory for {guild.name}**\n" + symbol_key + "\n"
+
+    # Get all categories and sort them
+    categories = sorted([cat for cat in guild.categories], key=lambda x: x.position)
+
+    # Get channels not in any category
+    orphaned_channels = [ch for ch in guild.channels if ch.category is None and not isinstance(ch, discord.CategoryChannel)]
+    orphaned_channels.sort(key=lambda x: x.position)
+
+    # Process categories and their channels
+    for category in categories:
+        channel_map_text += f"📁 **{category.name}**\n"
+
+        # Get channels in this category, sorted by position
+        category_channels = sorted([ch for ch in category.channels], key=lambda x: x.position)
+
+        for i, channel in enumerate(category_channels):
+            is_last_channel = i == len(category_channels) - 1
+            channel_prefix = "└── " if is_last_channel else "├── "
+
+            # Add channel icon based on type
+            if isinstance(channel, discord.TextChannel):
+                channel_icon = "💬"
+            elif isinstance(channel, discord.VoiceChannel):
+                channel_icon = "🔊"
+            elif isinstance(channel, discord.ForumChannel):
+                channel_icon = "📋"
+            elif isinstance(channel, discord.StageChannel):
+                channel_icon = "🎤"
+            else:
+                channel_icon = "📺"
+
+            channel_map_text += f"│   {channel_prefix}{channel_icon} {channel.name}\n"
+
+            # Get threads for this channel if it's a text or forum channel
+            if isinstance(channel, (discord.TextChannel, discord.ForumChannel)):
+                try:
+                    # Get active threads
+                    active_threads = []
+                    if hasattr(channel, 'threads'):
+                        active_threads = list(channel.threads)
+
+                    # Also try to get archived threads (limited to avoid rate limits)
+                    try:
+                        async for thread in channel.archived_threads(limit=10):
+                            active_threads.append(thread)
+                    except:
+                        pass  # Skip if we can't access archived threads
+
+                    if active_threads:
+                        active_threads.sort(key=lambda x: x.name.lower())
+
+                        for j, thread in enumerate(active_threads):
+                            is_last_thread = j == len(active_threads) - 1
+                            thread_prefix = "└── " if is_last_thread else "├── "
+                            continuation = "    " if is_last_channel else "│   "
+
+                            # Thread status indicators
+                            if thread.archived:
+                                thread_icon = "📦"  # Archived
+                            elif thread.locked:
+                                thread_icon = "🔒"  # Locked
+                            else:
+                                thread_icon = "🧵"  # Active thread
+
+                            channel_map_text += f"│   {continuation}    {thread_prefix}{thread_icon} {thread.name}\n"
+                except Exception as e:
+                    # If we can't access threads, just skip them
+                    pass
+
+        channel_map_text += "│\n"  # Add spacing between categories
+
+    # Add orphaned channels (not in any category)
+    if orphaned_channels:
+        channel_map_text += f"📁 **No Category**\n"
+        for i, channel in enumerate(orphaned_channels):
+            is_last_channel = i == len(orphaned_channels) - 1
+            channel_prefix = "└── " if is_last_channel else "├── "
+
+            # Add channel icon based on type
+            if isinstance(channel, discord.TextChannel):
+                channel_icon = "💬"
+            elif isinstance(channel, discord.VoiceChannel):
+                channel_icon = "🔊"
+            elif isinstance(channel, discord.ForumChannel):
+                channel_icon = "📋"
+            elif isinstance(channel, discord.StageChannel):
+                channel_icon = "🎤"
+            else:
+                channel_icon = "📺"
+
+            channel_map_text += f"    {channel_prefix}{channel_icon} {channel.name}\n"
+
+            # Get threads for this channel if it's a text or forum channel
+            if isinstance(channel, (discord.TextChannel, discord.ForumChannel)):
+                try:
+                    # Get active threads
+                    active_threads = []
+                    if hasattr(channel, 'threads'):
+                        active_threads = list(channel.threads)
+
+                    # Also try to get archived threads (limited)
+                    try:
+                        async for thread in channel.archived_threads(limit=10):
+                            active_threads.append(thread)
+                    except:
+                        pass
+
+                    if active_threads:
+                        active_threads.sort(key=lambda x: x.name.lower())
+
+                        for j, thread in enumerate(active_threads):
+                            is_last_thread = j == len(active_threads) - 1
+                            thread_prefix = "└── " if is_last_thread else "├── "
+                            continuation = "    " if is_last_channel else "    "
+
+                            # Thread status indicators
+                            if thread.archived:
+                                thread_icon = "📦"  # Archived
+                            elif thread.locked:
+                                thread_icon = "🔒"  # Locked
+                            else:
+                                thread_icon = "🧵"  # Active thread
+
+                            channel_map_text += f"    {continuation}    {thread_prefix}{thread_icon} {thread.name}\n"
+                except Exception as e:
+                    pass
+
+    # Discord has a 2000 character limit for messages, so we need to split if needed
+    if len(channel_map_text) <= 2000:
+        await interaction.followup.send(channel_map_text, ephemeral=private)
+    else:
+        # Split the message into chunks
+        chunks = []
+        current_chunk = ""
+        lines = channel_map_text.split('\n')
+
+        for line in lines:
+            if len(current_chunk + line + '\n') <= 1950:  # Leave some buffer
+                current_chunk += line + '\n'
+            else:
+                if current_chunk:
+                    chunks.append(current_chunk)
+                current_chunk = line + '\n'
+
+        if current_chunk:
+            chunks.append(current_chunk)
+
+        # Send the chunks
+        for i, chunk in enumerate(chunks):
+            if i == 0:
+                await interaction.followup.send(f"**Part {i+1}/{len(chunks)}**\n{chunk}", ephemeral=private)
+            else:
+                await interaction.followup.send(f"**Part {i+1}/{len(chunks)}**\n{chunk}", ephemeral=private)
+
+
 # start bot event loop
 token = os.getenv("BOT_TOKEN")
 print(
