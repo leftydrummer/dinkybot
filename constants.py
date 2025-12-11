@@ -135,3 +135,5 @@ BOT_READY_MSG = """
 """
 
 SHOW_READY_MSG = False
+
+DUMMY_TRIGGER = True
