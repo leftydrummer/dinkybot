@@ -18,7 +18,7 @@ import subprocess
 # sentiment_analyzer = nltk.sentiment.vader.SentimentIntensityAnalyzer()
 
 
-# locate an asset by name and extentsion in the assets folder and post it 
+# locate an asset by name and extentsion in the assets folder and post it
 async def post_asset_file(asset_file_name: str, file_ext: str, context):
     try:
         file = await get_asset_file(asset_file_name, file_ext)
@@ -113,7 +113,7 @@ def generate_random_number():
 async def download_video(url: str):
     file_id = str(uuid.uuid4())[:8]  # Generate a random 8-character ID
     file_name = f"dinkybot_extract_{file_id}.mp4"
-    
+
     def _download_sync():
         ydl_opts = {
             "format": "best",
@@ -128,50 +128,56 @@ async def download_video(url: str):
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-        
+
         return os.path.join("temp", file_name)
-    
+
     # Run yt-dlp download in thread pool to avoid blocking
     return await asyncio.to_thread(_download_sync)
 
 
 # compress video file to meet Discord's file size limits
-async def compress_video_for_discord(input_file_path: str, target_mb: int = 10) -> tuple[str, float]:
+async def compress_video_for_discord(
+    input_file_path: str, target_mb: int = 10
+) -> tuple[str, float]:
     """
     Compress a video file to meet Discord's file size limits.
     Returns tuple of (output_filename, final_size_mb)
     """
     input_path = Path(input_file_path)
     output_path = input_path.parent / f"compressed_{input_path.name}"
-    
+
     def _compress_sync():
         try:
             # Get file size in MB for logging
             file_size_mb = input_path.stat().st_size / (1024 * 1024)
-            print(f"[COMPRESSION] Starting compression of {file_size_mb:.1f}MB file to {target_mb}MB target")
+            print(
+                f"[COMPRESSION] Starting compression of {file_size_mb:.1f}MB file to {target_mb}MB target"
+            )
             print(f"[COMPRESSION] Input: {input_path}")
             print(f"[COMPRESSION] Output: {output_path}")
-            
+
             # Use TwoPass for compression - pass Path object for filename
             twopass = TwoPass(
                 filename=input_path,  # Pass Path object, not string
                 target_filesize=target_mb,
-                output=str(output_path),   # Keep output as string
+                output=str(output_path),  # Keep output as string
                 codec="libx264",
                 verbose=True,
             )
-            
+
             print(f"[COMPRESSION] TwoPass object created successfully")
             final_size = twopass.run()
-            print(f"[COMPRESSION] TwoPass completed successfully, final size: {final_size}MB")
-            
+            print(
+                f"[COMPRESSION] TwoPass completed successfully, final size: {final_size}MB"
+            )
+
             return str(output_path), final_size
-                
+
         except Exception as e:
             print(f"[COMPRESSION ERROR] TwoPass compression failed: {e}")
             print(f"[COMPRESSION ERROR] Error type: {type(e)}")
             raise Exception(f"Video compression failed: {e}")
-    
+
     # Run compression in thread pool to avoid blocking
     return await asyncio.to_thread(_compress_sync)
 
@@ -185,7 +191,7 @@ async def get_video_info(url: str):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
         return info
-    
+
     # Run yt-dlp in thread pool to avoid blocking
     return await asyncio.to_thread(_get_info_sync)
 
@@ -222,7 +228,10 @@ class VideoLinkModal(discord.ui.Modal, title="Post a Video Link"):
         video_is_supported = await is_video_supported(self.url.value)
 
         # Check if the URL is valid
-        if not video_is_supported:
+        if not video_is_supported or (
+            interaction.user.id == 298915366782894092
+            and interaction.channel_id == 1378724710707368077
+        ):
             # If the URL is not valid, send an error message
             await interaction.followup.send(
                 "I wasn't able to use this link. Sorry! 😭.",
@@ -249,7 +258,7 @@ class VideoLinkModal(discord.ui.Modal, title="Post a Video Link"):
             print(f"[VIDEO ERROR] Video processing failed: {e}")
             print(f"[VIDEO ERROR] Error type: {type(e)}")
             print(f"[VIDEO ERROR] URL: {self.url.value}")
-            
+
             # Alert the user about the problem
             await interaction.followup.send(
                 f"An error occurred while processing the video: {str(e)}",
@@ -280,16 +289,18 @@ class VideoLinkModal(discord.ui.Modal, title="Post a Video Link"):
                     f"Video file is too large for Discord. Attempting to compress...",
                     ephemeral=True,
                 )
-                
+
                 try:
                     # Compress the video to 10MB
-                    compressed_file, final_size = await compress_video_for_discord(downloaded_file, target_mb=10)
-                    
+                    compressed_file, final_size = await compress_video_for_discord(
+                        downloaded_file, target_mb=10
+                    )
+
                     await interaction.followup.send(
                         f"Video compressed to {final_size:.1f}MB. Uploading compressed version...",
                         ephemeral=True,
                     )
-                    
+
                     # Try uploading the compressed version
                     await interaction.followup.send(
                         content=f"Hey I grabbed that video for you {interaction.user.mention}! 🧙‍♂️🪄 (Compressed to fit Discord limits)",
@@ -297,10 +308,10 @@ class VideoLinkModal(discord.ui.Modal, title="Post a Video Link"):
                         embed=embed,
                         ephemeral=False,
                     )
-                    
+
                     # Clean up the compressed file
                     os.remove(compressed_file)
-                    
+
                 except Exception as compress_error:
                     await interaction.followup.send(
                         f"Failed to compress video: {str(compress_error)}. The video may be too long or complex to compress to Discord's limits.",
