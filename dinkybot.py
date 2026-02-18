@@ -114,10 +114,50 @@ async def on_message(message):
 async def on_member_join(member):
     print(f"{member} has joined the server!")
     global intros_channel
-    await intros_channel.send(
-        f"Welcome to the server, {member.mention}! Type `/help` to learn more about me. DINK YOURSELF!"
+    
+    # Create a welcome embed with formatting
+    welcome_embed = discord.Embed(
+        title="👋 Welcome to the DINKY Podcast Community!",
+        description=f"Hi there, {member.mention}! We're thrilled to have you here. Before you dive in, could you take a moment to answer a few quick questions here so we can get to know you better?",
+        color=discord.Color.pink()
     )
-
+    
+    welcome_embed.add_field(
+        name="📍 Where do you live?",
+        value="Just the city/country is fine!",
+        inline=False
+    )
+    
+    welcome_embed.add_field(
+        name="🎂 How old are you?",
+        value="Age is just a number",
+        inline=False
+    )
+    
+    welcome_embed.add_field(
+        name="🎨 What are your hobbies?",
+        value="Tell us what you're into!",
+        inline=False
+    )
+    
+    welcome_embed.add_field(
+        name="❤️ #1 reason for being childfree?",
+        value="If you're a fencesitter, we have a dedicated chat room for that too! 💬",
+        inline=False
+    )
+    
+    welcome_embed.add_field(
+        name="💰 Tell us about your most recent 'DINK yourself' moment!",
+        value="How did you spend your time or money recently in a way you wouldn't have if you had kids? 🚀",
+        inline=False
+    )
+    
+    welcome_embed.set_footer(
+        text="We're excited to get to know you! ✨"
+    )
+    
+    await intros_channel.send(embed=welcome_embed)
+    await intros_channel.send(f"DINK YOURSELF, {member.mention}!")
     await intros_channel.send(file=(await utils.get_asset_file("dy-optimized", "gif")))
 
 
@@ -229,6 +269,27 @@ async def search_episodes(
         await interaction.followup.send(
             "No matching podcast episodes found.", ephemeral=private
         )
+
+
+# Simulate a member join for testing (only available in DEBUG_MODE)
+@dinkybot.command(name="simulate_join", description="Simulates a member joining the server (DEBUG MODE ONLY)")
+@commands.has_permissions(administrator=True)
+async def simulate_join(ctx, member: discord.Member = None):
+    """Simulates a member joining the server."""
+    if not constants.DEBUG_MODE:
+        await ctx.send("❌ Debug mode is disabled. Set DEBUG_MODE=True in constants.py to enable.", ephemeral=True)
+        return
+    
+    if intros_channel is None:
+        await ctx.send("❌ intros_channel is not initialized yet. The bot may still be starting up.", ephemeral=True)
+        return
+    
+    if member is None:
+        member = ctx.author
+    
+    # Manually call the on_member_join event
+    dinkybot.dispatch('member_join', member)
+    await ctx.send(f"✅ Simulated a join for {member.mention}. Check the intros channel!", ephemeral=True)
 
 
 # /help will show the user bot help info

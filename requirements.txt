@@ -6,3 +6,4 @@ psutil
 ffmpeg4discord
 aiohttp
 asyncio
+yt-dlp
