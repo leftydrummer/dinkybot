@@ -9,9 +9,7 @@ import uuid
 import shutil
 from pathlib import Path
 from ffmpeg4discord.twopass import TwoPass
-import aiohttp
 import asyncio
-import subprocess
 
 # # download the vader lexicon for sentiment analysis
 # nltk.download("vader_lexicon", quiet=True)
@@ -37,14 +35,6 @@ async def get_asset_file(file_name: str, file_extension: str) -> discord.File:
         return discord.File(file_path)
     else:
         raise FileNotFoundError(f"Asset file {file_name}.{file_extension} not found.")
-
-
-# returns bool indicating if the message contains anti-lotr sentiment
-# async def contains_anti_lotr_sentiment(message: str):
-#     return (
-#         any(keyword in message.lower() for keyword in constants.LOTR_KEYWORDS)
-#         and sentiment_analyzer.polarity_scores(message)["compound"] < -0.6
-#     )
 
 
 # generate an embed for a podcast given a title, description, url, and image url
