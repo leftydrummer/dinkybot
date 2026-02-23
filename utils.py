@@ -127,7 +127,7 @@ async def download_video(url: str):
 
 # compress video file to meet Discord's file size limits
 async def compress_video_for_discord(
-    input_file_path: str, target_mb: int = 10
+    input_file_path: str, target_mb: int = 9
 ) -> tuple[str, float]:
     """
     Compress a video file to meet Discord's file size limits.
