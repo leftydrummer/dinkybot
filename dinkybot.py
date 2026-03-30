@@ -83,7 +83,8 @@ async def on_ready():
         await general_channel.send(constants.BOT_READY_MSG)
 
     try: 
-        regional_channels = [chan for chan in await dinkybot.fetch_channel(constants.MEET_PALS_CATEGORY_ID).channels if chan.name not in constants.MEET_PALS_EXCLUDED_CHANNEL_NAMES]
+        regions_category = await dinkybot.fetch_channel(constants.MEET_PALS_CATEGORY_ID)
+        regional_channels = [chan for chan in regions_category.channels if chan.name not in constants.MEET_PALS_EXCLUDED_CHANNEL_NAMES]
         print(f"Regional channels in 'Meet Pals' category: {[chan.name for chan in regional_channels]}")
     
     except discord.NotFound:
