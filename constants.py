@@ -17,3 +17,7 @@ SHOW_READY_MSG = False
 DUMMY_TRIGGER = False
 
 DEBUG_MODE = True
+
+MEET_PALS_CATEGORY_ID = '1313905840880619550'
+
+MEET_PALS_EXCLUDED_CHANNEL_NAMES = ["general", "podcast-chatter", "intros-bios"]
