@@ -93,6 +93,7 @@ async def on_ready():
                 print(f"Role '{channel.name}' not found for channel '{channel.name}'. Creating role.")
                 channel_access_role = await bot_guild.create_role(name=channel.name)
                 
+                
 
             await channel.set_permissions(channel_access_role, read_messages=True, send_messages=True, read_message_history=True, connect=True, speak=True)
             print(f"Set permissions for role '{channel_access_role.name}' in channel '{channel.name}'")
