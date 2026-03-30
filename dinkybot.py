@@ -86,10 +86,20 @@ async def on_ready():
         regions_category = await dinkybot.fetch_channel(constants.MEET_PALS_CATEGORY_ID)
         regional_channels = [chan for chan in regions_category.channels if chan.name not in constants.MEET_PALS_EXCLUDED_CHANNEL_NAMES]
         print(f"Regional channels in 'Meet Pals' category: {[chan.name for chan in regional_channels]}")
-    
-    except discord.NotFound:
+
+        for channel in regional_channels:
+            channel_access_role = discord.utils.get(bot_guild.roles, name=channel.name)
+            if not channel_access_role:
+                print(f"Role '{channel.name}' not found for channel '{channel.name}'. Creating role.")
+                channel_access_role = await bot_guild.create_role(name=channel.name)
+                
+
+            await channel.set_permissions(channel_access_role, read_messages=True, send_messages=True, read_message_history=True, connect=True, speak=True)
+            print(f"Set permissions for role '{channel_access_role.name}' in channel '{channel.name}'")
+        
+    except Exception as e:
         print(f"Category with ID {constants.MEET_PALS_CATEGORY_ID} not found. Please check the ID and ensure the bot has access to it.")
-        regional_channels = []
+        return
 
 # Runs when a message is posted to any channel the bot has access to
 # Recieves a message object as an argument
