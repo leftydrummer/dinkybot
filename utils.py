@@ -11,6 +11,8 @@ from pathlib import Path
 from ffmpeg4discord.twopass import TwoPass
 import asyncio
 
+from onboarding import RoleSelectionView
+
 # # download the vader lexicon for sentiment analysis
 # nltk.download("vader_lexicon", quiet=True)
 # sentiment_analyzer = nltk.sentiment.vader.SentimentIntensityAnalyzer()
@@ -71,6 +73,30 @@ async def post_new_episode_alert(channel: discord.TextChannel, embed: discord.Em
     await channel.send(constants.NEW_PODCAST_ALERT)
     await channel.send(embed=embed)
 
+
+async def send_onboarding(member, guild):
+    
+    roles = await get_regional_chat_channel_roles(guild)
+    """Utility function to trigger the DM."""
+    view = RoleSelectionView(role_options=roles, member=member)
+    try:
+        await member.send(
+            content="Hello! We detected you joined the Selfish Witch Patreon tier. This grants you access two of our regional chat channels so you can connect with other fans in your area! Please select your two regional channels from the dropdown below:",
+            view=view
+        )
+    except discord.Forbidden:
+        print(f"Unable to DM {member.name}. They likely have DMs disabled.")
+
+async def get_regional_chat_channels(guild: discord.Guild):
+    regions_category = await guild.fetch_channel(constants.MEET_PALS_CATEGORY_ID) 
+    regional_channels = [channel for channel in regions_category.channels if channel.name not in constants.MEET_PALS_EXCLUDED_CHANNEL_NAMES]
+    return regional_channels
+
+async def get_regional_chat_channel_roles(guild: discord.Guild):
+    regional_channel_names = [channel.name for channel in await get_regional_chat_channels(guild)]
+    all_roles = await guild.fetch_roles()
+    regional_roles = [role for role in all_roles if role.name in regional_channel_names]
+    return regional_roles
 
 # search for a podcast in the feed by title
 async def podcast_search(entries: list[feedparser.FeedParserDict], search_term: str):
@@ -199,6 +225,10 @@ async def is_video_supported(url: str) -> bool:
         print(f"Error checking video support: {e}")
         return False
 
+async def get_regional_channels(bot: discord.Client):
+    regions_category = await bot.fetch_channel(constants.MEET_PALS_CATEGORY_ID) 
+    regional_channels = [channel for channel in regions_category.channels if channel.name not in constants.MEET_PALS_EXCLUDED]
+    return regional_channels
 
 # Define a modal for collecting the video URL
 class VideoLinkModal(discord.ui.Modal, title="Post a Video Link"):
