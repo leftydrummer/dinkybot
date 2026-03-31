@@ -185,7 +185,7 @@ async def on_member_join(member):
 
 
 @dinkybot.event
-async def on_member_update(before, after):
+async def on_member_update(before: discord.Member, after: discord.Member):
     # If they were already in the server and just got the role
     was_patron = any(r.id == constants.TSW_PATREON_TIER_ROLE_ID for r in before.roles)
     is_patron = any(r.id == constants.TSW_PATREON_TIER_ROLE_ID for r in after.roles)
