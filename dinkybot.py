@@ -180,9 +180,8 @@ async def on_member_join(member):
     await intros_channel.send(f"DINK YOURSELF, {member.mention}!")
     await intros_channel.send(file=(await utils.get_asset_file("dy-optimized", "gif")))
     
-    await utils.send_onboarding(member, bot_guild)
-
-
+    if any(r.id == constants.TSW_PATREON_TIER_ROLE_ID for r in member.roles):
+        await utils.send_onboarding(member, bot_guild)
 
 @dinkybot.event
 async def on_member_update(before: discord.Member, after: discord.Member):
