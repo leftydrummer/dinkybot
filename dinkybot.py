@@ -102,9 +102,7 @@ async def on_ready():
         print(f"Category with ID {constants.MEET_PALS_CATEGORY_ID} not found. Please check the ID and ensure the bot has access to it.")
         return
 
-    me_user = bot_guild.get_member(257048354872229888)
-    await utils.send_onboarding(me_user, bot_guild)
-
+    
 # Runs when a message is posted to any channel the bot has access to
 # Recieves a message object as an argument
 @dinkybot.event
@@ -187,7 +185,7 @@ async def on_member_join(member):
 
 
 @dinkybot.event
-async def on_member_update(before, after):
+async def on_member_update(before: discord.Member, after: discord.Member):
     # If they were already in the server and just got the role
     was_patron = any(r.id == constants.TSW_PATREON_TIER_ROLE_ID for r in before.roles)
     is_patron = any(r.id == constants.TSW_PATREON_TIER_ROLE_ID for r in after.roles)
