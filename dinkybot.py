@@ -102,9 +102,7 @@ async def on_ready():
         print(f"Category with ID {constants.MEET_PALS_CATEGORY_ID} not found. Please check the ID and ensure the bot has access to it.")
         return
 
-    me_user = bot_guild.get_member(257048354872229888)
-    await utils.send_onboarding(me_user, bot_guild)
-
+    
 # Runs when a message is posted to any channel the bot has access to
 # Recieves a message object as an argument
 @dinkybot.event
