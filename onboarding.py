@@ -17,7 +17,7 @@ class RoleSelectionView(discord.ui.View):
 
     # 1. The Dropdown (Select Menu)
     @discord.ui.select(
-        placeholder="Choose 2 regional channels...",
+        placeholder="Choose regional channels",
         min_values=2,
         max_values=2,
     )
