@@ -102,6 +102,11 @@ async def on_ready():
         print(f"Category with ID {constants.MEET_PALS_CATEGORY_ID} not found. Please check the ID and ensure the bot has access to it.")
         return
 
+    if constants.ONE_TIME_PATREON_ONBOARDING_BLAST:
+        for member in bot_guild.members:
+            if any(r.id == constants.TSW_PATREON_TIER_ROLE_ID for r in member.roles):
+                await utils.send_onboarding(member, bot_guild)
+                print(f"Sent onboarding to {member.name}#{member.discriminator} ({member.id})")
     
 # Runs when a message is posted to any channel the bot has access to
 # Recieves a message object as an argument
@@ -176,10 +181,14 @@ async def on_member_join(member):
         text="We're excited to get to know you! ✨"
     )
     
-    await intros_channel.send(embed=welcome_embed)
-    await intros_channel.send(f"DINK YOURSELF, {member.mention}!")
-    await intros_channel.send(file=(await utils.get_asset_file("dy-optimized", "gif")))
+    #Only send intro message if member is in a Patreon tier that has access to intros channel
     
+    if any(r.id in [constants.NBB_PATREON_TIER_ROLE_ID, constants.CCL_PATREON_TIER_ROLE_ID] for r in member.roles):
+        await intros_channel.send(embed=welcome_embed)
+        await intros_channel.send(f"DINK YOURSELF, {member.mention}!")
+        await intros_channel.send(file=(await utils.get_asset_file("dy-optimized", "gif")))
+        
+        
     if any(r.id == constants.TSW_PATREON_TIER_ROLE_ID for r in member.roles):
         await utils.send_onboarding(member, bot_guild)
 
