@@ -38,7 +38,7 @@ class RoleSelectionView(discord.ui.View):
         role_names = [role.name for role in roles_to_add]
         # Apply the roles
         await self.member.add_roles(*roles_to_add)
-
+     
 
         # 3. Final Step: "Remove" the dialog by editing the message to have NO View
         # This prevents them from clicking it again.
