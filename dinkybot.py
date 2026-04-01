@@ -331,6 +331,17 @@ async def simulate_join(ctx, member: discord.Member = None):
     dinkybot.dispatch('member_join', member)
     await ctx.send(f"✅ Simulated a join for {member.mention}. Check the intros channel!", ephemeral=True)
 
+#Command to manully send a member the onboarding
+@dinkybot.command(name="send_onboarding", description="Manually send the onboarding message to a member")
+@commands.has_permissions(administrator=True)
+async def send_onboarding_manual(ctx, member: discord.Member = None):
+    """Manually sends the onboarding message to a member."""
+    
+    if member is None:
+        member = ctx.author
+    
+    await utils.send_onboarding(member, bot_guild)
+    await ctx.send(f"✅ Sent onboarding to {member.mention}.", ephemeral=True)
 
 # /help will show the user bot help info
 @dinkybot.tree.command(
