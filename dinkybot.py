@@ -105,7 +105,7 @@ async def on_ready():
     if constants.ONE_TIME_PATREON_ONBOARDING_BLAST:
         for member in bot_guild.members:
             if any(r.id == constants.TSW_PATREON_TIER_ROLE_ID for r in member.roles):
-                await utils.send_onboarding(member, bot_guild)
+                await utils.send_tsw_onboarding(member, bot_guild)
                 print(f"Sent onboarding to {member.name}#{member.discriminator} ({member.id})")
     
 # Runs when a message is posted to any channel the bot has access to
@@ -190,7 +190,7 @@ async def on_member_join(member):
         
         
     if any(r.id == constants.TSW_PATREON_TIER_ROLE_ID for r in member.roles):
-        await utils.send_onboarding(member, bot_guild)
+        await utils.send_tsw_onboarding(member, bot_guild)
 
 @dinkybot.event
 async def on_member_update(before: discord.Member, after: discord.Member):
@@ -199,7 +199,7 @@ async def on_member_update(before: discord.Member, after: discord.Member):
     is_patron = any(r.id == constants.TSW_PATREON_TIER_ROLE_ID for r in after.roles)
     
     if is_patron and not was_patron:
-        await utils.send_onboarding(after, bot_guild)
+        await utils.send_tsw_onboarding(after, bot_guild)
 
 ### TASKS ###
 
@@ -356,10 +356,10 @@ async def help(interaction: discord.Interaction, private: bool = True):
 
 @dinkybot.tree.command(name="send_onboarding", description="Manually send the onboarding message")
 @commands.has_permissions(administrator=True)
-async def send_onboarding_manual(interaction: discord.Interaction, member: discord.Member = None):
+async def send_tsw_onboarding_manual(interaction: discord.Interaction, member: discord.Member = None):
     target_member = member or interaction.user
     
-    await utils.send_onboarding(target_member, interaction.guild)
+    await utils.send_tsw_onboarding(target_member, interaction.guild)
     await interaction.response.send_message(f"✅ Sent onboarding to {target_member.display_name}.", ephemeral=True)
 
 @dinkybot.tree.command(

@@ -74,7 +74,7 @@ async def post_new_episode_alert(channel: discord.TextChannel, embed: discord.Em
     await channel.send(embed=embed)
 
 
-async def send_onboarding(member, guild):
+async def send_tsw_onboarding(member, guild):
     
     roles = await get_regional_chat_channel_roles(guild)
     """Utility function to trigger the DM."""
