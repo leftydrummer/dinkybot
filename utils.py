@@ -81,7 +81,7 @@ async def send_tsw_onboarding(member, guild):
     view = RoleSelectionView(role_options=roles, member=member)
     try:
         await member.send(
-            content="Hello! We detected you joined the Selfish Witch Patreon tier. This grants you access two of our regional chat channels so you can connect with other fans in your area! Please select your two regional channels from the dropdown below:",
+            content="Hello! Thank you for joining the Selfish Witch Patreon tier! This grants you access to two of our regional chat channels so you can connect with other fans in your area! Please select your two regional channels from the dropdown below:",
             view=view
         )
     except discord.Forbidden:
